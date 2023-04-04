@@ -29,7 +29,6 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   ]);
 
   selectTitleIndex = 0;
-  selectValue = '';
 
   isShowDropdown = false;
 
@@ -55,8 +54,11 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   clickOnSelectElement(index: number): void {
+    if(this.input) {
+      this.input.nativeElement.value = this.titleList[index].title;
+    }
+
     this.selectTitleIndex = index;
-    this.selectValue = this.titleList[index].title;
     this.isShowDropdown = false;
   }
 
@@ -108,7 +110,9 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
     fromEvent<KeyboardEvent>(window, 'keyup').pipe(
       filter((event: KeyboardEvent) => event.key === 'Enter'),
       tap(() => {
-        this.selectValue = this.titleList[this.selectTitleIndex].title;
+        if(this.input) {
+          this.input.nativeElement.value = this.titleList[this.selectTitleIndex].title;
+        }
         this.isShowDropdown = false;
       }),
       takeUntil(this.unsubscribe$),
