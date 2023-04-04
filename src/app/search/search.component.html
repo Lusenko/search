@@ -1,0 +1,14 @@
+<div class="search">
+  <input class="input" type="text" [formControl]="search" [value]="selectValue">
+
+  <div #dropdown class="list-body" *ngIf="isShowDropdown">
+    <p
+       class="list"
+       [ngClass]="{focus: selectTitleIndex === i}"
+       *ngFor="let list of titleList; let i = index"
+       (click)="clickOnSelectElement(i)"
+    >
+      {{list.title}}
+    </p>
+  </div>
+</div>
