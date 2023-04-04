@@ -1,9 +1,18 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {InfoService} from "../../service/info.service";
-import {FormControl} from "@angular/forms";
-import {debounceTime, filter, fromEvent, Subject, switchMap, takeUntil, tap} from "rxjs";
+import { FormControl, Validators} from "@angular/forms";
+import {
+  debounceTime,
+  filter,
+  fromEvent,
+  Subject,
+  switchMap,
+  takeUntil,
+  tap
+} from "rxjs";
 import {Items} from "../../interface/items";
 import {Info} from "../../interface/info";
+import {removeSpaces} from '../../ts/removeSpace';
 
 @Component({
   selector: 'app-search',
@@ -14,7 +23,10 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('dropdown') dropdown: ElementRef | undefined;
   @ViewChild('input') input: ElementRef | undefined;
 
-  search = new FormControl('', {nonNullable: true});
+  search = new FormControl('',[
+    Validators.required,
+    removeSpaces
+  ]);
 
   selectTitleIndex = 0;
   selectValue = '';
