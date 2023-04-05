@@ -47,7 +47,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
       distinctUntilChanged(),
       filter(val => val !== ''),
       switchMap(val => {
-        return this.infoService.getInfo(val ?? '').pipe(
+        return this.infoService.getInfo(val?.trim() ?? '').pipe(
           tap(({items}: Info) => {
             this.titleList = items;
             this.isShowDropdown = true;
