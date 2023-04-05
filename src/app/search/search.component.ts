@@ -12,7 +12,6 @@ import {
 } from "rxjs";
 import {Items} from "../../interface/items";
 import {Info} from "../../interface/info";
-import {removeSpaces} from '../../ts/removeSpace';
 
 @Component({
   selector: 'app-search',
