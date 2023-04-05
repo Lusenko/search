@@ -1,8 +1,16 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {InfoService} from "../../service/info.service";
-import { FormControl, Validators} from "@angular/forms";
+import {FormControl} from "@angular/forms";
 import {
   debounceTime,
+  distinctUntilChanged,
   filter,
   fromEvent,
   Subject,
@@ -22,10 +30,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('dropdown') dropdown: ElementRef | undefined;
   @ViewChild('input') input: ElementRef | undefined;
 
-  search = new FormControl('',[
-    Validators.required,
-    removeSpaces
-  ]);
+  search = new FormControl('');
 
   selectTitleIndex = 0;
 
@@ -39,6 +44,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.search.valueChanges.pipe(
       debounceTime(500),
+      distinctUntilChanged(),
       filter(val => val !== ''),
       switchMap(val => {
         return this.infoService.getInfo(val ?? '').pipe(
@@ -54,7 +60,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   clickOnSelectElement(index: number): void {
     if(this.input) {
-      this.input.nativeElement.value = this.titleList[index].title;
+      this.search.setValue(this.titleList[index].title, {emitEvent: false});
     }
 
     this.selectTitleIndex = index;
@@ -110,7 +116,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
       filter((event: KeyboardEvent) => event.key === 'Enter'),
       tap(() => {
         if(this.input) {
-          this.input.nativeElement.value = this.titleList[this.selectTitleIndex].title;
+          this.search.setValue(this.titleList[this.selectTitleIndex].title, {emitEvent: false});
         }
         this.isShowDropdown = false;
       }),
