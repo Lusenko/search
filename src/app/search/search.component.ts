@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   OnDestroy,
@@ -9,7 +10,7 @@ import {
 } from '@angular/core';
 import {InfoService} from "../../service/info.service";
 import {FormControl} from "@angular/forms";
-import {debounceTime, distinctUntilChanged, filter, fromEvent, Subject, switchMap, takeUntil, tap} from "rxjs";
+import {debounceTime, distinctUntilChanged, filter, fromEvent, map, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {Items} from "../../interface/items";
 import {Info} from "../../interface/info";
 
@@ -23,7 +24,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('dropdown') dropdown: ElementRef | undefined;
   @ViewChild('input') input: ElementRef | undefined;
 
-  search = new FormControl('');
+  search = new FormControl('', {nonNullable: true});
 
   selectTitleIndex = 0;
 
@@ -37,10 +38,11 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.search.valueChanges.pipe(
       debounceTime(500),
+      filter(val => val.trim() !== ''),
+      map(val => val.trim()),
       distinctUntilChanged(),
-      filter(val => val !== ''),
       switchMap(val => {
-        return this.infoService.getInfo(val?.trim() ?? '').pipe(
+        return this.infoService.getInfo(val).pipe(
           tap(({items}: Info) => {
             this.titleList = items;
             this.isShowDropdown = true;
