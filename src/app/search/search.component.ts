@@ -55,9 +55,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   clickOnSelectElement(index: number): void {
-    if(this.input) {
-      this.search.setValue(this.titleList[index].title, {emitEvent: false});
-    }
+    this.search.setValue(this.titleList[index].title, {emitEvent: false});
 
     this.selectTitleIndex = index;
     this.isShowDropdown = false;
@@ -115,9 +113,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
     fromEvent<KeyboardEvent>(window, 'keyup').pipe(
       filter((event: KeyboardEvent) => event.key === 'Enter'),
       tap(() => {
-        if(this.input) {
-          this.search.setValue(this.titleList[this.selectTitleIndex].title, {emitEvent: false});
-        }
+        this.search.setValue(this.titleList[this.selectTitleIndex].title, {emitEvent: false});
         this.isShowDropdown = false;
 
         this.changeDetectorRef.markForCheck();
