@@ -3,10 +3,10 @@
 
   <div #dropdown class="list-body" *ngIf="isShowDropdown">
     <p
-       class="list"
-       [ngClass]="{focus: selectTitleIndex === i}"
-       *ngFor="let list of titleList; let i = index"
-       (click)="clickOnSelectElement(i)"
+      class="list"
+      [ngClass]="{focus: selectTitleIndex === i}"
+      *ngFor="let list of titleList; let i = index"
+      (click)="clickOnSelectElement(i)"
     >
       {{list.title}}
     </p>
