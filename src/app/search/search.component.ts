@@ -38,8 +38,8 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.search.valueChanges.pipe(
       debounceTime(500),
-      filter(val => val.trim() !== ''),
       map(val => val.trim()),
+      filter(val => val !== ''),
       distinctUntilChanged(),
       switchMap(val => {
         return this.infoService.getInfo(val).pipe(
