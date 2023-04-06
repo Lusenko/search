@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
   OnDestroy,
@@ -8,23 +9,15 @@ import {
 } from '@angular/core';
 import {InfoService} from "../../service/info.service";
 import {FormControl} from "@angular/forms";
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  fromEvent,
-  Subject,
-  switchMap,
-  takeUntil,
-  tap
-} from "rxjs";
+import {debounceTime, distinctUntilChanged, filter, fromEvent, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {Items} from "../../interface/items";
 import {Info} from "../../interface/info";
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss']
+  styleUrls: ['./search.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('dropdown') dropdown: ElementRef | undefined;
@@ -39,7 +32,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
   titleList: Items[] = [];
 
   private unsubscribe$ = new Subject<void>();
-  constructor(private readonly infoService: InfoService) { }
+  constructor(private readonly infoService: InfoService, private readonly changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.search.valueChanges.pipe(
@@ -51,6 +44,7 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
           tap(({items}: Info) => {
             this.titleList = items;
             this.isShowDropdown = true;
+            this.changeDetectorRef.markForCheck();
           } ),
         )
       }),
@@ -86,6 +80,8 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dropdown.nativeElement.scrollTop = 0;
           }
         }
+
+        this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
@@ -108,6 +104,8 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dropdown.nativeElement.scrollTop = this.dropdown.nativeElement.scrollHeight;
           }
         }
+
+        this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
@@ -119,19 +117,27 @@ export class SearchComponent implements OnInit, AfterViewInit, OnDestroy {
           this.search.setValue(this.titleList[this.selectTitleIndex].title, {emitEvent: false});
         }
         this.isShowDropdown = false;
+
+        this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
 
     fromEvent(window, 'click').pipe(
       filter(e => e.target !== this.dropdown?.nativeElement && e.target !== this.input?.nativeElement),
-      tap(() => this.isShowDropdown = false),
+      tap(() => {
+        this.isShowDropdown = false;
+        this.changeDetectorRef.markForCheck();
+      }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
 
     fromEvent(window, 'click').pipe(
       filter(e => e.target === this.input?.nativeElement && this.search.value !== ''),
-      tap(() => this.isShowDropdown = true),
+      tap(() => {
+        this.isShowDropdown = true;
+        this.changeDetectorRef.markForCheck();
+      }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
   }
