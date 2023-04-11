@@ -43,6 +43,10 @@ export class DropDownListComponent implements  AfterViewInit, OnDestroy {
       filter((event: KeyboardEvent) => event.key === 'ArrowRight'),
       tap(() => {
         this.colorIndex++;
+
+        if(this.colorIndex === this.colorList.length) {
+          this.colorIndex = 0;
+        }
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
@@ -51,6 +55,10 @@ export class DropDownListComponent implements  AfterViewInit, OnDestroy {
       filter((event: KeyboardEvent) => event.key === 'ArrowLeft'),
       tap(() => {
         this.colorIndex--;
+
+        if(this.colorIndex === -1) {
+          this.colorIndex = this.colorList.length - 1;
+        }
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
