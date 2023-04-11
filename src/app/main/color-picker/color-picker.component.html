@@ -1,1 +1,17 @@
-<p>color-picker works!</p>
+<div class="color-picker">
+  <div class="color-picker-body">
+    <p class="text">Enter your color:</p>
+
+    <div>
+      <div>
+        <p class="arrow" [ngClass]="{clicked: isShowDropDown}" (click)="changeDropDownState()"></p>
+      </div>
+
+      <div class="color-list" *ngIf="isShowDropDown">
+        <app-drop-down-list [colorList]="colorList" (selectedColor)="addColor($event)"></app-drop-down-list>
+      </div>
+    </div>
+
+    <p class="color" [ngStyle]="{backgroundColor: selectedColor}"></p>
+  </div>
+</div>

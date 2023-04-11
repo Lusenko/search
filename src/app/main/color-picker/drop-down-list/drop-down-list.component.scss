@@ -1,0 +1,24 @@
+.color-list {
+  position: absolute;
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: repeat(5, 1fr);
+  border: 1px solid black;
+  border-radius: 6px;
+  padding: 3px;
+  box-shadow: 4px 4px 10px -5px black;
+  margin: 5px 0 0;
+
+  .color {
+    padding: 1px;
+
+    p {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .focus {
+    background-color: #a1a1a1;
+  }
+}
