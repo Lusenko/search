@@ -62,14 +62,6 @@ export class DropDownListComponent implements  AfterViewInit, OnDestroy {
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
-
-    fromEvent<KeyboardEvent>(window, 'keyup').pipe(
-      filter((event: KeyboardEvent) => event.key === 'Enter'),
-      tap(() => {
-        this.selectedColor.emit(this.colorList[this.colorIndex].color);
-      }),
-      takeUntil(this.unsubscribe$),
-    ).subscribe()
   }
 
   ngOnDestroy(): void {

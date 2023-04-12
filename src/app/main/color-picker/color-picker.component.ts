@@ -1,15 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
 import {Color} from "../../../interface/color";
+import {filter, fromEvent, Subject, takeUntil, tap} from "rxjs";
 
 @Component({
   selector: 'app-color-picker',
   templateUrl: './color-picker.component.html',
   styleUrls: ['./color-picker.component.scss']
 })
-export class ColorPickerComponent implements OnInit {
+export class ColorPickerComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('arrow') arrow: ElementRef | undefined;
+
   isShowDropDown = false;
 
   selectedColor = '';
+
+  private unsubscribe$ = new Subject<void>();
 
   colorList: Color[] = [
     {color: '#000000'},
@@ -50,11 +55,23 @@ export class ColorPickerComponent implements OnInit {
     this.selectedColor = color;
   }
 
-  ngOnInit(): void {
-  }
-
   changeDropDownState(): void {
     this.isShowDropDown = !this.isShowDropDown;
+  }
+
+  ngAfterViewInit(): void {
+    fromEvent<KeyboardEvent>(this.arrow?.nativeElement, 'keyup').pipe(
+      filter((event: KeyboardEvent) => event.key === 'Enter'),
+      tap(() => {
+        this.isShowDropDown = !this.isShowDropDown;
+      }),
+      takeUntil(this.unsubscribe$),
+    ).subscribe()
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
 }
