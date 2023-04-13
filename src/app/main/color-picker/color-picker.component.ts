@@ -13,8 +13,6 @@ export class ColorPickerComponent implements AfterViewInit, OnDestroy {
 
   isShowDropDown = false;
 
-  selectedColor = '';
-
   color = new FormControl('#000000');
 
   colorList: Color[] = [
@@ -53,7 +51,7 @@ export class ColorPickerComponent implements AfterViewInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
 
   addColor(color: string): void {
-    this.selectedColor = color;
+    this.color.patchValue(color);
   }
 
   changeDropDownState(): void {
