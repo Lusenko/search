@@ -1,25 +1,51 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
 import {Color} from "../../../../interface/color";
 import {filter, fromEvent, Subject, takeUntil, tap} from "rxjs";
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 @Component({
   selector: 'app-drop-down-list',
   templateUrl: './drop-down-list.component.html',
-  styleUrls: ['./drop-down-list.component.scss']
+  styleUrls: ['./drop-down-list.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: DropDownListComponent,
+      multi: true
+    }
+  ]
 })
-export class DropDownListComponent implements  AfterViewInit, OnDestroy {
+export class DropDownListComponent implements  AfterViewInit, OnDestroy, ControlValueAccessor {
   @Input() colorList: Color[] = [];
   @Output() selectedColor = new EventEmitter<string>();
 
   colorIndex = -1;
 
+  color = '';
+
   private unsubscribe$ = new Subject<void>();
 
   constructor() { }
 
+  onTouched: () => void = () => {};
+  onChange: (() => (value: string) => {}) | undefined;
+
   focusOnColor(index: number): void {
     this.colorIndex = index;
-    this.selectedColor.emit(this.colorList[index].color);
+    this.color = this.colorList[index].color
+    this.selectedColor.emit(this.color);
+  }
+
+  writeValue(color: string): void {
+    this.color = color;
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
   }
 
   ngAfterViewInit(): void {

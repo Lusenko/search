@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
 import {Color} from "../../../interface/color";
 import {filter, fromEvent, Subject, takeUntil, tap} from "rxjs";
+import {FormControl} from "@angular/forms";
 
 @Component({
   selector: 'app-color-picker',
@@ -14,7 +15,7 @@ export class ColorPickerComponent implements AfterViewInit, OnDestroy {
 
   selectedColor = '';
 
-  private unsubscribe$ = new Subject<void>();
+  color = new FormControl('#000000');
 
   colorList: Color[] = [
     {color: '#000000'},
@@ -49,7 +50,7 @@ export class ColorPickerComponent implements AfterViewInit, OnDestroy {
     {color: '#E1BEE7'},
   ];
 
-  constructor() { }
+  private unsubscribe$ = new Subject<void>();
 
   addColor(color: string): void {
     this.selectedColor = color;

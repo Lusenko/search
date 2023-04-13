@@ -8,7 +8,7 @@
       </div>
 
       <div class="color-list" *ngIf="isShowDropDown">
-        <app-drop-down-list [colorList]="colorList" (selectedColor)="addColor($event)"></app-drop-down-list>
+        <app-drop-down-list [formControl]="color" [colorList]="colorList" (selectedColor)="addColor($event)"></app-drop-down-list>
       </div>
     </div>
 
