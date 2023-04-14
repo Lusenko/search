@@ -1,4 +1,13 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output
+} from '@angular/core';
 import {Color} from "../../../../../interface/color";
 import {filter, fromEvent, Subject, takeUntil, tap} from "rxjs";
 
@@ -6,6 +15,7 @@ import {filter, fromEvent, Subject, takeUntil, tap} from "rxjs";
   selector: 'app-drop-down-list',
   templateUrl: './drop-down-list.component.html',
   styleUrls: ['./drop-down-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DropDownListComponent implements  AfterViewInit, OnDestroy {
   @Input() colorList: Color[] = [];
@@ -15,7 +25,7 @@ export class DropDownListComponent implements  AfterViewInit, OnDestroy {
 
   private unsubscribe$ = new Subject<void>();
 
-  constructor() { }
+  constructor(private readonly changeDetectorRef: ChangeDetectorRef) { }
 
   focusOnColor(index: number): void {
     this.colorIndex = index;
@@ -27,6 +37,7 @@ export class DropDownListComponent implements  AfterViewInit, OnDestroy {
       filter((event: KeyboardEvent) => event.key === 'ArrowDown'),
       tap(() => {
         this.colorIndex > this.colorList.length - 5 ? this.colorIndex -= this.colorList.length - 5 : this.colorIndex += 5;
+        this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
@@ -35,6 +46,7 @@ export class DropDownListComponent implements  AfterViewInit, OnDestroy {
       filter((event: KeyboardEvent) => event.key === 'ArrowUp'),
       tap(() => {
         this.colorIndex < 5 ? this.colorIndex += this.colorList.length - 5 : this.colorIndex -= 5;
+        this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
@@ -47,6 +59,8 @@ export class DropDownListComponent implements  AfterViewInit, OnDestroy {
         if(this.colorIndex === this.colorList.length) {
           this.colorIndex = 0;
         }
+
+        this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
@@ -59,6 +73,8 @@ export class DropDownListComponent implements  AfterViewInit, OnDestroy {
         if(this.colorIndex === -1) {
           this.colorIndex = this.colorList.length - 1;
         }
+
+        this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()

@@ -3,11 +3,9 @@
     <p class="text">Choose your color:</p>
 
     <div>
-      <div #arrow tabindex="0">
-        <p class="arrow" [ngClass]="{focus: isShowDropDown}" (click)="changeDropDownState()"></p>
-      </div>
+        <p #arrow tabindex="0" class="arrow" [ngClass]="{focus: isShowDropDown}" (click)="changeDropDownState()"></p>
 
-      <div class="color-list" *ngIf="isShowDropDown">
+      <div #dropDownList class="color-list" *ngIf="isShowDropDown">
         <app-drop-down-list [colorList]="colorList" (selectedColor)="addColor($event)"></app-drop-down-list>
       </div>
     </div>

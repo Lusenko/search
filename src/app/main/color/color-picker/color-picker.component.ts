@@ -1,4 +1,12 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild
+} from '@angular/core';
 import {Color} from "../../../../interface/color";
 import {filter, fromEvent, Subject, takeUntil, tap} from "rxjs";
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
@@ -13,10 +21,12 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
       multi: true,
       useExisting: ColorPickerComponent,
     }
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ColorPickerComponent implements AfterViewInit, OnDestroy, ControlValueAccessor {
   @ViewChild('arrow') arrow: ElementRef | undefined;
+  @ViewChild('dropDownList') dropDownList: ElementRef | undefined;
 
   isShowDropDown = false;
 
@@ -60,7 +70,7 @@ export class ColorPickerComponent implements AfterViewInit, OnDestroy, ControlVa
   private onTouched: Function = () => {};
   private unsubscribe$ = new Subject<void>();
 
-  constructor() {}
+  constructor(private readonly changeDetectorRef: ChangeDetectorRef) {}
 
   writeValue(color: string): void {
     this.color = color;
@@ -77,6 +87,7 @@ export class ColorPickerComponent implements AfterViewInit, OnDestroy, ControlVa
   addColor(color: string): void {
     this.color = color;
     this.onChange(color);
+    this.isShowDropDown = false;
   }
 
   changeDropDownState(): void {
@@ -87,7 +98,17 @@ export class ColorPickerComponent implements AfterViewInit, OnDestroy, ControlVa
     fromEvent<KeyboardEvent>(this.arrow?.nativeElement, 'keyup').pipe(
       filter((event: KeyboardEvent) => event.key === 'Enter'),
       tap(() => {
-        this.isShowDropDown = !this.isShowDropDown;
+        this.changeDropDownState()
+        this.changeDetectorRef.markForCheck();
+      }),
+      takeUntil(this.unsubscribe$),
+    ).subscribe()
+
+   fromEvent(window, 'click').pipe(
+      filter(e => e.target !== this.dropDownList?.nativeElement && e.target !== this.arrow?.nativeElement),
+      tap(() => {
+        this.isShowDropDown = false;
+        this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
