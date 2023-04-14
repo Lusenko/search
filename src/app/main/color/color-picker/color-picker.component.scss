@@ -16,7 +16,7 @@
         transform: rotate(45deg);
         cursor: pointer;
 
-        &.clicked {
+        &.focus {
           transform: rotate(223deg);
         }
       }

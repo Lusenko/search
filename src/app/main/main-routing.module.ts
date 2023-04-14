@@ -9,8 +9,8 @@ const routes: Routes = [
     loadChildren: () => import('./search/search.module').then(m => m.SearchModule)
   },
   {
-    path: 'color-picker',
-    loadChildren: () => import('./color-picker/color-picker.module').then(m => m.ColorPickerModule)
+    path: 'color',
+    loadChildren: () => import('./color/color.module').then(m => m.ColorModule)
   }
 
 ];

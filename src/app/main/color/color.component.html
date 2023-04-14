@@ -1,0 +1,5 @@
+<div class="color-picker">
+  <app-color-picker [formControl]="color"></app-color-picker>
+
+  <p class="error" *ngIf="color?.errors">error</p>
+</div>

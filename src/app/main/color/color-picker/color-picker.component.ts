@@ -1,19 +1,26 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
-import {Color} from "../../../interface/color";
+import {Color} from "../../../../interface/color";
 import {filter, fromEvent, Subject, takeUntil, tap} from "rxjs";
-import {FormControl, Validators} from "@angular/forms";
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 @Component({
   selector: 'app-color-picker',
   templateUrl: './color-picker.component.html',
-  styleUrls: ['./color-picker.component.scss']
+  styleUrls: ['./color-picker.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      multi: true,
+      useExisting: ColorPickerComponent,
+    }
+  ]
 })
-export class ColorPickerComponent implements AfterViewInit, OnDestroy {
+export class ColorPickerComponent implements AfterViewInit, OnDestroy, ControlValueAccessor {
   @ViewChild('arrow') arrow: ElementRef | undefined;
 
   isShowDropDown = false;
 
-  color = new FormControl('#000000', Validators.pattern(/^#+([a-fA-F0-9]{6})$/));
+  color = '';
 
   colorList: Color[] = [
     {color: '#000000'},
@@ -49,10 +56,27 @@ export class ColorPickerComponent implements AfterViewInit, OnDestroy {
     {color: '0000000'}
   ];
 
+  private onChange: Function = () => {};
+  private onTouched: Function = () => {};
   private unsubscribe$ = new Subject<void>();
 
+  constructor() {}
+
+  writeValue(color: string): void {
+    this.color = color;
+  }
+
+  registerOnChange(fn: Function): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: Function): void {
+    this.onTouched = fn;
+  }
+
   addColor(color: string): void {
-    this.color.patchValue(color);
+    this.color = color;
+    this.onChange(color);
   }
 
   changeDropDownState(): void {
