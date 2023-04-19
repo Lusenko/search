@@ -20,7 +20,6 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   submit(): void {
-    console.log('before timer ',this.counter);
     timer(1000, 1000).pipe(
        tap(() => {
          this.counter += 1;
