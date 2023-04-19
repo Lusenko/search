@@ -12,7 +12,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   counter = 0;
 
-  private unsubscribe$ = new Subject<number>();
+  private unsubscribe$ = new Subject<void>();
 
   constructor() { }
 
@@ -31,7 +31,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   pause(): void {
     this.isShowButton = false;
-    this.unsubscribe$.next(this.counter);
+    this.unsubscribe$.next();
   }
 
   reset(): void {
@@ -40,7 +40,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.unsubscribe$.next(0);
+    this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
 
