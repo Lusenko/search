@@ -11,6 +11,10 @@ const routes: Routes = [
   {
     path: 'color',
     loadChildren: () => import('./color/color.module').then(m => m.ColorModule)
+  },
+  {
+    path: 'timer',
+    loadChildren: () => import('./timer/timer.module').then(m => m.TimerModule)
   }
 
 ];

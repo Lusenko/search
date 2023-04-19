@@ -1,0 +1,7 @@
+<div class="timer">
+    <button class="play-button" *ngIf="!isShowButton" (click)="submit()">play</button>
+    <button class="pause-button" *ngIf="isShowButton" (click)="pause()">pause</button>
+    <button class="reset-button" (click)="reset()">reset</button>
+
+    <div class="seconds">{{counter}}</div>
+</div>

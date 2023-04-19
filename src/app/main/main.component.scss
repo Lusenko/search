@@ -2,17 +2,19 @@
   display: flex;
   justify-content: space-around;
 
-  .search-button {
+  .search {
     padding: 20px 40px;
-    border: transparent;
-    border-radius: 8px;
-    background-color: cornflowerblue;
-    font-size: 14px;
-    cursor: pointer;
   }
 
-  .color-picker-button {
+  .color-picker {
     padding: 20px 24px;
+  }
+
+  .timer {
+    padding: 20px 44px;
+  }
+
+  .button {
     border: transparent;
     border-radius: 8px;
     background-color: cornflowerblue;
