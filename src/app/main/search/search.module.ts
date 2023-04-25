@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {SearchRoutingModule} from './search-routing.module';
 import {ReactiveFormsModule} from "@angular/forms";
 import {SearchComponent} from "./search.component";
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -10,7 +11,8 @@ import {SearchComponent} from "./search.component";
   imports: [
     CommonModule,
     SearchRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedModule
   ]
 })
 export class SearchModule { }
