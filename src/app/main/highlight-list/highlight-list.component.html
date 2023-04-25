@@ -1,0 +1,7 @@
+<input type="text" [formControl]="search">
+
+<div class="droplist" *ngIf="isShowDropDown">
+    <div class="phone" *ngFor="let phone of phoneList">
+        <span appHighlight [inputValue]="search.value" [phoneValue]="phone.name">{{phone.name}}</span>
+    </div>
+</div>

@@ -15,6 +15,10 @@ const routes: Routes = [
   {
     path: 'timer',
     loadChildren: () => import('./timer/timer.module').then(m => m.TimerModule)
+  },
+  {
+    path: 'highlight-list',
+    loadChildren:  () => import('./highlight-list/highlight-list.module').then(m => m.HighlightListModule)
   }
 
 ];

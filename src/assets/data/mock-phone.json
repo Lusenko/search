@@ -1,0 +1,14 @@
+[
+    {"id": 1, "name": "Apple"},
+    {"id": 2, "name": "Huawei"},
+    {"id": 3, "name": "Infinix"},
+    {"id": 4, "name": "Motorola"},
+    {"id": 5, "name": "Nokia"},
+    {"id": 6, "name": "OPPO"},
+    {"id": 7, "name": "Poco"},
+    {"id": 8, "name": "Samsung"},
+    {"id": 9, "name": "Tecno"},
+    {"id": 10, "name": "Xiaomi"},
+    {"id": 11, "name": "ZTE"},
+    {"id": 12, "name": "realme"}
+]
