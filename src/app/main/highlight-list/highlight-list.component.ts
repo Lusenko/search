@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Subject, debounceTime, switchMap, takeUntil, tap } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs';
 import { Phone } from 'src/interface/phone';
 import { PhoneInfoService } from 'src/service/phoneInfo';
 
@@ -25,14 +25,14 @@ export class HighlightListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.search.valueChanges.pipe(
       debounceTime(600),
-      switchMap(() => this.phoneService.getPhoneInfo().pipe(
-        tap(x => {
-          this.isShowDropDown = true;
-          this.phoneList = x;
-          this.changeDetectorRef.markForCheck();
-        }
-        ),
-      )),
+      filter(val => val !== ''),
+      switchMap(() => this.phoneService.getPhoneInfo()),
+      map(val => val.filter(value => value.name.toLocaleLowerCase().includes(this.search.value))),
+      tap(value => {
+        this.isShowDropDown = true;
+        this.phoneList = value;
+        this.changeDetectorRef.markForCheck();
+      }),
       takeUntil(this.subscribe$),
     ).subscribe()
   }
