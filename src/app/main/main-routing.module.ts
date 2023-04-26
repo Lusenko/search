@@ -19,6 +19,10 @@ const routes: Routes = [
   {
     path: 'highlight-list',
     loadChildren:  () => import('./highlight-list/highlight-list.module').then(m => m.HighlightListModule)
+  },
+  {
+    path: 'table',
+    loadChildren: () => import('./table/table.module').then(m => m.TableModule)
   }
 
 ];

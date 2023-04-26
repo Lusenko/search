@@ -1,5 +1,6 @@
 .main-body {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-around;
 
   .search {
@@ -14,7 +15,12 @@
     padding: 20px 44px;
   }
 
+  .highlight {
+    padding: 20px 20px
+  }
+
   .table {
+    margin-top: 3px;
     padding: 20px 44px;
   }
 
