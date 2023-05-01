@@ -1,1 +1,18 @@
-<p>table works!</p>
+<div class="table">
+  <table>
+    <thead>
+    <tr>
+      <th *ngFor="let headList of headerList">
+        <app-header [title]="headList.head" [sortedState]="headList.sorted_state" (headState)="sortData($event)"></app-header>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let post of tableList">
+      <th>{{post.id}}</th>
+      <th>{{post.title}}</th>
+      <th>{{post.body}}</th>
+    </tr>
+    </tbody>
+  </table>
+</div>

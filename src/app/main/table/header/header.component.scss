@@ -1,0 +1,41 @@
+.title {
+  display: flex;
+  justify-content: center;
+
+  .title-text {
+    margin-right: 5px;
+  }
+
+  .arrow {
+    display: flex;
+    align-items: center;
+
+    .default {
+      .up {
+        border-bottom: 5px solid black;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        margin-bottom: 2px;
+      }
+
+      .down {
+        border-top: 5px solid black;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+      }
+    }
+
+    .up {
+      border-bottom: 5px solid black;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      margin-bottom: 2px;
+    }
+
+    .down {
+      border-top: 5px solid black;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+    }
+  }
+}
