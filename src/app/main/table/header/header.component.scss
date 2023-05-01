@@ -1,3 +1,16 @@
+@mixin up {
+  border-bottom: 5px solid black;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  margin-bottom: 2px;
+}
+
+@mixin down {
+  border-top: 5px solid black;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
 .title {
   display: flex;
   justify-content: center;
@@ -12,30 +25,20 @@
 
     .default {
       .up {
-        border-bottom: 5px solid black;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        margin-bottom: 2px;
+        @include up;
       }
 
       .down {
-        border-top: 5px solid black;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
+        @include down;
       }
     }
 
     .up {
-      border-bottom: 5px solid black;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      margin-bottom: 2px;
+      @include up;
     }
 
     .down {
-      border-top: 5px solid black;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
+      @include down;
     }
   }
 }
