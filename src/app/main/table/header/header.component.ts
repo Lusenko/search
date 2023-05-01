@@ -13,7 +13,21 @@ export class HeaderComponent {
   @Input() title = '';
   @Output() headState = new EventEmitter<TableHeader>();
 
-  state = SortState;
+  get state(): string {
+    switch (this.sortedState) {
+      case SortState.up: {
+        return 'up';
+      }
+
+      case SortState.down: {
+        return 'down';
+      }
+
+      default: {
+        return 'default';
+      }
+    }
+  }
 
   constructor() { }
 

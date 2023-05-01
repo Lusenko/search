@@ -2,13 +2,13 @@
   <p class="title-text" (click)="emitSortedState(title)">{{title}}</p>
 
   <div class="arrow" [ngSwitch]="state">
-    <div [ngClass]="{default: sortedState === state.default}">
-      <div [ngClass]="{up: sortedState === state.default}"></div>
-      <div [ngClass]="{down: sortedState === state.default}"></div>
+    <div class="default" *ngSwitchCase="'default'">
+      <div class="up"></div>
+      <div class="down"></div>
     </div>
 
-    <div [ngClass]="{up: sortedState === state.up}"></div>
+    <div class="up" *ngSwitchCase="'up'"></div>
 
-    <div [ngClass]="{down: sortedState === state.down}"></div>
+    <div class="down" *ngSwitchCase="'down'"></div>
   </div>
 </div>

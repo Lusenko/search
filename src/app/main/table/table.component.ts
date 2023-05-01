@@ -21,7 +21,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   tableList: Posts[] = [];
 
-  unsubscribe$ = new Subject<void>();
+  private unsubscribe$ = new Subject<void>();
   constructor(private readonly postsService: PostsService, private readonly sortService: SortService) { }
 
   ngOnInit(): void {
@@ -31,8 +31,20 @@ export class TableComponent implements OnInit, OnDestroy {
     ).subscribe()
   }
 
-  sortData(data: TableHeader): void {
-    this.sortService.sortingTable(data, this.tableList)
+  sortData(sortData: TableHeader): void {
+    this.headerList = this.headerList.map(val => {
+      if(val.head !== sortData.head) {
+        val.sorted_state = SortState.default;
+
+        return val;
+      }
+
+      val.sorted_state = sortData.sorted_state;
+
+      return val;
+    })
+
+    this.sortService.sortingTable(sortData, this.tableList)
   }
 
   ngOnDestroy(): void {
