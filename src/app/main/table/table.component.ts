@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {PostsService} from "../../../service/posts.service";
 import {Subject, takeUntil, tap} from "rxjs";
 import {Posts} from "../../../interface/posts";
@@ -9,7 +9,8 @@ import {SortService} from "../../../service/sort.service";
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
-  styleUrls: ['./table.component.scss']
+  styleUrls: ['./table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableComponent implements OnInit, OnDestroy {
 
@@ -22,11 +23,17 @@ export class TableComponent implements OnInit, OnDestroy {
   tableList: Posts[] = [];
 
   private unsubscribe$ = new Subject<void>();
-  constructor(private readonly postsService: PostsService, private readonly sortService: SortService) { }
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly sortService: SortService,
+    private readonly changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.postsService.getPostsInfo().pipe(
-      tap(x => this.tableList = x),
+      tap(x => {
+        this.tableList = x;
+        this.changeDetectorRef.markForCheck();
+      }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
   }
