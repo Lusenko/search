@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {TableHeader} from "../../../../interface/table-header";
-import {Posts} from "../../../../interface/posts";
 import {SortState} from "../../../../enum/sort-state";
 
 @Component({
@@ -11,34 +10,31 @@ import {SortState} from "../../../../enum/sort-state";
 })
 export class HeaderComponent {
   @Input() sortedState = SortState.default;
-  @Input() title = '';
-  @Output() headState = new EventEmitter<TableHeader>();
+  @Input() head = '';
+  @Output() headStateChange = new EventEmitter<TableHeader>();
 
   get state(): string {
     switch (this.sortedState) {
-      case SortState.up: {
+      case SortState.up:
         return 'up';
-      }
 
-      case SortState.down: {
+      case SortState.down:
         return 'down';
-      }
 
-      default: {
+      default:
         return 'default';
-      }
     }
   }
 
   constructor() { }
 
-  emitSortedState(head: string): void {
+  changeSortedState(head: string): void {
     if (this.sortedState === SortState.default) {
       this.sortedState = SortState.up;
     } else {
       this.sortedState = this.sortedState === SortState.up ? SortState.down : SortState.default;
     }
 
-    this.headState?.emit({head: head as keyof Posts , sorted_state: this.sortedState});
+    this.headStateChange?.emit({head: head , sortedState: this.sortedState});
   }
 }

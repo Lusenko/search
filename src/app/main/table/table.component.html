@@ -3,12 +3,12 @@
     <thead>
     <tr>
       <th *ngFor="let headList of headerList">
-        <app-header [title]="headList.head" [sortedState]="headList.sorted_state" (headState)="sortData($event)"></app-header>
+        <app-header [head]="headList.head" [sortedState]="headList.sortedState" (headStateChange)="sort($event)"></app-header>
       </th>
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let post of tableList">
+    <tr *ngFor="let post of posts">
       <th>{{post.id}}</th>
       <th>{{post.title}}</th>
       <th>{{post.body}}</th>

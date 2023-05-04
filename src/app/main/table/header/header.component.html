@@ -1,5 +1,5 @@
-<div class="title" (click)="emitSortedState(title)">
-  <p class="title-text">{{title}}</p>
+<div class="title" (click)="changeSortedState(head)">
+  <p class="title-text">{{head}}</p>
 
   <div class="arrow" [ngSwitch]="state">
     <div class="default" *ngSwitchCase="'default'">

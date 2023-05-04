@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {PostsService} from "../../../service/posts.service";
 import {Subject, takeUntil, tap} from "rxjs";
-import {Posts} from "../../../interface/posts";
+import {Post} from "../../../interface/post";
 import {TableHeader} from "../../../interface/table-header";
 import {SortState} from "../../../enum/sort-state";
 import {SortService} from "../../../service/sort.service";
@@ -15,12 +15,12 @@ import {SortService} from "../../../service/sort.service";
 export class TableComponent implements OnInit, OnDestroy {
 
   headerList: TableHeader[] = [
-    {head: 'id', sorted_state: SortState.default},
-    {head: 'title', sorted_state: SortState.default},
-    {head: 'body', sorted_state: SortState.default}
+    { head: 'id', sortedState: SortState.default },
+    { head: 'title', sortedState: SortState.default },
+    { head: 'body', sortedState: SortState.default }
   ]
 
-  tableList: Posts[] = [];
+  posts: Post[] = [];
 
   private unsubscribe$ = new Subject<void>();
   constructor(
@@ -29,29 +29,29 @@ export class TableComponent implements OnInit, OnDestroy {
     private readonly changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.postsService.getPostsInfo().pipe(
-      tap(x => {
-        this.tableList = x;
+    this.postsService.getList$().pipe(
+      tap(posts => {
+        this.posts = posts;
         this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
   }
 
-  sortData(sortData: TableHeader): void {
+  sort(header: TableHeader): void {
     this.headerList = this.headerList.map(val => {
-      if(val.head !== sortData.head) {
-        val.sorted_state = SortState.default;
+      if(val.head !== header.head) {
+        val = {...val, sortedState: SortState.default};
 
         return val;
       }
 
-      val.sorted_state = sortData.sorted_state;
+      val = {...val, sortedState: header.sortedState};
 
       return val;
     })
 
-    this.sortService.sortingTable(sortData, this.tableList)
+    this.sortService.sortTable(header, this.posts);
   }
 
   ngOnDestroy(): void {
