@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {SortState} from "../../../enum/sort-state";
 import {TableHeader} from "../../../interface/table-header";
+import {Post} from "../../../interface/post";
 
 @Component({
   selector: 'app-header',
@@ -8,7 +9,7 @@ import {TableHeader} from "../../../interface/table-header";
   styleUrls: ['./header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent<T> {
+export class HeaderComponent<T extends Post> {
   @Input() sortedState = SortState.default;
   @Input() head: keyof T;
   @Output() headStateChange = new EventEmitter<TableHeader<T>>();
