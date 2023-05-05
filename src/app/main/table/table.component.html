@@ -2,8 +2,8 @@
   <table>
     <thead>
     <tr>
-      <th *ngFor="let headList of headerList">
-        <app-header [head]="headList.head" [sortedState]="headList.sortedState" (headStateChange)="sort($event)"></app-header>
+      <th *ngFor="let header of headerList">
+        <app-header [head]="header.head" [sortedState]="header.sortedState" (headStateChange)="sort($event)"></app-header>
       </th>
     </tr>
     </thead>
