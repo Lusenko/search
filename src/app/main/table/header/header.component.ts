@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {TableHeader} from "../../../../interface/table-header";
-import {SortState} from "../../../../enum/sort-state";
+import {SortState} from "../../../enum/sort-state";
 
 @Component({
   selector: 'app-header',
@@ -11,7 +10,7 @@ import {SortState} from "../../../../enum/sort-state";
 export class HeaderComponent {
   @Input() sortedState = SortState.default;
   @Input() head = '';
-  @Output() headStateChange = new EventEmitter<TableHeader>();
+  @Output() headStateChange = new EventEmitter();
 
   get state(): string {
     switch (this.sortedState) {
@@ -35,6 +34,6 @@ export class HeaderComponent {
       this.sortedState = this.sortedState === SortState.up ? SortState.down : SortState.default;
     }
 
-    this.headStateChange?.emit({head: head , sortedState: this.sortedState});
+    this.headStateChange?.emit({head: head, sortedState: this.sortedState});
   }
 }

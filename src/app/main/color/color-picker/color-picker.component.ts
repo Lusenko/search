@@ -7,7 +7,7 @@ import {
   OnDestroy,
   ViewChild
 } from '@angular/core';
-import {Color} from "../../../../interface/color";
+import {Color} from "../../../interface/color";
 import {filter, fromEvent, Subject, takeUntil, tap} from "rxjs";
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 

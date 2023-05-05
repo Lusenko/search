@@ -1,6 +1,6 @@
 import {SortState} from "../enum/sort-state";
 
-export interface TableHeader {
-  head: string;
+export interface TableHeader<T> {
+  head: keyof T;
   sortedState: SortState;
 }

@@ -8,11 +8,11 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import {InfoService} from "../../../service/info.service";
 import {FormControl} from "@angular/forms";
 import {debounceTime, distinctUntilChanged, filter, fromEvent, map, Subject, switchMap, takeUntil, tap} from "rxjs";
-import {Items} from "../../../interface/items";
-import {Info} from "../../../interface/info";
+import {InfoService} from "../../service/info.service";
+import {Items} from "../../interface/items";
+import {Info} from "../../interface/info";
 
 @Component({
   selector: 'app-search',

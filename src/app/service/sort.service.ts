@@ -8,7 +8,7 @@ import {Post} from "../interface/post";
 })
 export class SortService {
 
-  sortTable(header: TableHeader, list: Post[]): Post[] {
+  sortTable(header: TableHeader<Post>, list: Post[]): Post[] {
     switch (header.sortedState) {
       case SortState.default:
         return list.sort((a,b) => {
