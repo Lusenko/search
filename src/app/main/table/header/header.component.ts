@@ -9,7 +9,7 @@ import {Post} from "../../../interface/post";
   styleUrls: ['./header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent<T extends Post> {
+export class HeaderComponent<T> {
   @Input() sortedState = SortState.default;
   @Input() head: keyof T;
   @Output() headStateChange = new EventEmitter<TableHeader<T>>();
