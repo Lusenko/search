@@ -7,7 +7,12 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
+          "changeDetection": "OnPush",
+          "prefix": "app",
           "style": "scss"
+        },
+        "@schematics/angular:directive": {
+          "prefix": "app"
         }
       },
       "root": "",
