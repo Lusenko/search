@@ -1,3 +1,23 @@
+<div class="table-options">
+  <div class="item-counter">
+    <p class="text">items:</p>
+    <div class="item-dropdown">
+      <p class="counter">{{itemsCount}}</p>
+      <div class="arrow" (click)="showDropDown()">
+        <div class="down" *ngIf="!isShowDropDown"></div>
+        <div class="up" *ngIf="isShowDropDown"></div>
+      </div>
+      <div class="dropdown" *ngIf="isShowDropDown">
+        <p
+          class="dropdown-counter"
+          *ngFor="let dropDown of dropDownList; let i = index"
+          (click)="changeItemsCount(i)"
+        >{{dropDown}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="table">
   <table>
     <thead>

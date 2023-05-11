@@ -1,3 +1,55 @@
+.table-options {
+  border: 1px solid black;
+  border-radius: 8px;
+  margin: 0 0 10px 0;
+
+  .item-counter {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+
+    .item-dropdown {
+      display: flex;
+      position: relative;
+      align-items: center;
+      margin: 0 0 0 5px;
+      padding: 5px;
+      border: 1px solid black;
+      border-radius: 4px;
+
+      .arrow {
+        margin: 0 0 0 10px;
+
+        .down {
+          border-top: 5px solid black;
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+        }
+
+        .up {
+          border-bottom: 5px solid black;
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          margin-bottom: 2px;
+        }
+      }
+
+      .dropdown {
+        position: absolute;
+        top: 30px;
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 4px;
+        padding: 8px;
+
+        .dropdown-counter {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
 .table {
   border: 1px solid black;
   border-radius: 8px;
