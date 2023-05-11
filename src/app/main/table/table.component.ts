@@ -29,6 +29,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
   isShowDropDown = false;
 
+  itemIndex = 0;
+  allPages = 0;
+
   private unsubscribe$ = new Subject<void>();
   constructor(
     private readonly postsService: PostsService,
@@ -39,7 +42,9 @@ export class TableComponent implements OnInit, OnDestroy {
     this.postsService.getList$().pipe(
       tap(posts => {
         this.posts = posts;
-        this.posts.length = TableLength.default;
+        this.itemIndex = TableLength.default;
+        this.allPages = posts.length / TableLength.default;
+        posts.length = TableLength.default;
         this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),
@@ -49,12 +54,8 @@ export class TableComponent implements OnInit, OnDestroy {
   sort(header: TableHeader<Post>): void {
     this.headerList = this.headerList.map(val => {
       if(val.head !== header.head) {
-        console.log(val);
-
         return {...val, sortedState: SortState.default};
       }
-
-      console.log(val);
 
       return {...val, sortedState: header.sortedState};
     })
@@ -63,14 +64,17 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   changeItemsCount(index: number): void {
-    this.itemsCount = this.dropDownList[index];
+    this.itemIndex = index;
+
+    this.itemsCount = this.dropDownList[this.itemIndex];
 
     this.isShowDropDown = false;
 
     this.postsService.getList$().pipe(
       tap(post => {
         this.posts = post;
-        this.posts.length = this.dropDownList[index];
+        this.allPages = post.length / this.dropDownList[this.itemIndex];
+        post.length = this.dropDownList[this.itemIndex];
         this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),

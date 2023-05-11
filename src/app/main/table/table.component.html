@@ -1,6 +1,6 @@
 <div class="table-options">
   <div class="item-counter">
-    <p class="text">items:</p>
+    <p class="text">items per page:</p>
     <div class="item-dropdown">
       <p class="counter">{{itemsCount}}</p>
       <div class="arrow" (click)="showDropDown()">
@@ -13,6 +13,25 @@
           *ngFor="let dropDown of dropDownList; let i = index"
           (click)="changeItemsCount(i)"
         >{{dropDown}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="pagination">
+    <p class="text">Page 1 of {{allPages}}</p>
+    <div class="arrows">
+      <div class="start">
+        <div class="stick"></div>
+        <div class="arrow"></div>
+      </div>
+      <div class="left">
+        <div class="arrow"></div>
+      </div>
+      <div class="right">
+        <div class="arrow"></div>
+      </div>
+      <div class="end">
+        <div class="arrow"></div>
+        <div class="stick"></div>
       </div>
     </div>
   </div>

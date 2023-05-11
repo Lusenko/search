@@ -1,4 +1,16 @@
+@mixin arrow {
+  margin-left: 4px;
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 4px;
+  transform: rotate(135deg);
+  cursor: pointer;
+}
+
 .table-options {
+  display: flex;
+  align-items: center;
   border: 1px solid black;
   border-radius: 8px;
   margin: 0 0 10px 0;
@@ -44,6 +56,65 @@
 
         .dropdown-counter {
           cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .pagination {
+    display: flex;
+    margin-left: 30px;
+
+    .arrows {
+      display: flex;
+
+      .start {
+        display: flex;
+        align-items: center;
+
+        .stick {
+          border: solid black;
+          border-width: 0 2px 0 0;
+          display: inline-block;
+          padding: 7px;
+        }
+
+        .arrow {
+          @include arrow;
+        }
+      }
+
+      .left {
+        .arrow {
+          @include arrow;
+          margin-left: 20px;
+        }
+      }
+
+      .right {
+        .arrow {
+         @include arrow;
+          margin-left: 20px;
+          transform: rotate(315deg);
+        }
+      }
+
+      .end {
+        display: flex;
+        align-items: center;
+        margin-left: 20px;
+
+        .stick {
+          border: solid black;
+          border-width: 0 0 0 2px;
+          display: inline-block;
+          padding: 7px;
+        }
+
+        .arrow {
+          @include arrow;
+          margin-right: 4px;
+          transform: rotate(315deg);
         }
       }
     }
