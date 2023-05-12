@@ -6,6 +6,9 @@ import {SortState} from "../../enum/sort-state";
 import {PostsService} from "../../service/posts.service";
 import {SortService} from "../../service/sort.service";
 import {TableLength} from "../../enum/table-length";
+import {FormControl} from "@angular/forms";
+import {Slice} from "../../interface/slice";
+import {SliceListService} from "../../service/slice-list.service";
 
 @Component({
   selector: 'app-table',
@@ -17,7 +20,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   dropDownList = [TableLength.default, TableLength.middle, TableLength.large]
 
-  itemsCount = this.dropDownList[0];
+  itemsControl = new FormControl(this.dropDownList[0], {nonNullable: true});
 
   headerList: TableHeader<Post>[] = [
     { head: 'id', sortedState: SortState.default },
@@ -31,24 +34,46 @@ export class TableComponent implements OnInit, OnDestroy {
 
   itemIndex = 0;
   allPages = 0;
+  currentPage = 0;
 
   private unsubscribe$ = new Subject<void>();
   constructor(
     private readonly postsService: PostsService,
     private readonly sortService: SortService,
-    private readonly changeDetectorRef: ChangeDetectorRef) { }
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly sliceListService: SliceListService) { }
 
   ngOnInit(): void {
+    this.itemsControl.valueChanges
+      .pipe(
+        tap(value => {
+          const slice = this.sliceListService.getSliceList(this.currentPage, Number(value));
+          this.sliceListService.getPostList(slice);
+
+          this.changeDetectorRef.markForCheck();
+        }),
+        takeUntil(this.unsubscribe$),
+      ).subscribe()
+
     this.postsService.getList$().pipe(
       tap(posts => {
-        this.posts = posts;
-        this.itemIndex = TableLength.default;
-        this.allPages = posts.length / TableLength.default;
-        posts.length = TableLength.default;
+        this.sliceListService.setPostList(posts);
+        const slice = this.sliceListService.getSliceList(this.currentPage, this.itemsControl.value);
+        this.sliceListService.getPostList(slice);
+
         this.changeDetectorRef.markForCheck();
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
+
+    this.sliceListService.postList$
+      .pipe(
+        tap(value => {
+          this.posts = value;
+          this.changeDetectorRef.markForCheck();
+        }),
+        takeUntil(this.unsubscribe$),
+      ).subscribe()
   }
 
   sort(header: TableHeader<Post>): void {
@@ -66,7 +91,7 @@ export class TableComponent implements OnInit, OnDestroy {
   changeItemsCount(index: number): void {
     this.itemIndex = index;
 
-    this.itemsCount = this.dropDownList[this.itemIndex];
+    this.itemsControl.setValue(this.dropDownList[this.itemIndex]);
 
     this.isShowDropDown = false;
 
@@ -79,6 +104,12 @@ export class TableComponent implements OnInit, OnDestroy {
       }),
       takeUntil(this.unsubscribe$),
     ).subscribe()
+  }
+
+  nextPage(): void {
+    console.log(this.posts);
+    this.currentPage++;
+
   }
 
   showDropDown(): void {
