@@ -7,7 +7,6 @@ import {PostsService} from "../../service/posts.service";
 import {SortService} from "../../service/sort.service";
 import {TableLength} from "../../enum/table-length";
 import {FormControl} from "@angular/forms";
-import {Slice} from "../../interface/slice";
 import {SliceListService} from "../../service/slice-list.service";
 
 @Component({
@@ -28,13 +27,12 @@ export class TableComponent implements OnInit, OnDestroy {
     { head: 'body', sortedState: SortState.default }
   ]
 
+  sortState: TableHeader<Post>;
+
   posts: Post[] = [];
 
-  isShowDropDown = false;
-
-  itemIndex = 0;
   allPages = 0;
-  currentPage = 0;
+  currentPage = 1;
 
   private unsubscribe$ = new Subject<void>();
   constructor(
@@ -47,7 +45,14 @@ export class TableComponent implements OnInit, OnDestroy {
     this.itemsControl.valueChanges
       .pipe(
         tap(value => {
-          const slice = this.sliceListService.getSliceList(this.currentPage, Number(value));
+          this.allPages = this.sliceListService.posts.length / Number(value);
+
+          if(this.currentPage > this.allPages) {
+            this.currentPage = this.allPages;
+          }
+
+          const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(value));
+
           this.sliceListService.getPostList(slice);
 
           this.changeDetectorRef.markForCheck();
@@ -57,8 +62,11 @@ export class TableComponent implements OnInit, OnDestroy {
 
     this.postsService.getList$().pipe(
       tap(posts => {
+        this.allPages = posts.length / this.itemsControl.value;
+
         this.sliceListService.setPostList(posts);
-        const slice = this.sliceListService.getSliceList(this.currentPage, this.itemsControl.value);
+        const slice = this.sliceListService.getSliceList(this.currentPage - 1, this.itemsControl.value);
+
         this.sliceListService.getPostList(slice);
 
         this.changeDetectorRef.markForCheck();
@@ -69,11 +77,54 @@ export class TableComponent implements OnInit, OnDestroy {
     this.sliceListService.postList$
       .pipe(
         tap(value => {
-          this.posts = value;
+          const header = this.sortState ?? SortState.default;
+
+          this.posts = this.sortService.sortTable(header ,value);
+
           this.changeDetectorRef.markForCheck();
         }),
         takeUntil(this.unsubscribe$),
       ).subscribe()
+  }
+
+  nextPage(): void {
+    if(this.currentPage === this.allPages) {
+      return;
+    }
+
+    this.currentPage++;
+
+    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
+
+    this.sliceListService.getPostList(slice);
+  }
+
+  previousPage(): void {
+    if (this.currentPage === 1) {
+      return;
+    }
+
+    this.currentPage--;
+
+    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
+
+    this.sliceListService.getPostList(slice);
+  }
+
+  firstPage(): void {
+    this.currentPage = 1;
+
+    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
+
+    this.sliceListService.getPostList(slice);
+  }
+
+  lastPage(): void {
+    this.currentPage = this.allPages;
+
+    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
+
+    this.sliceListService.getPostList(slice);
   }
 
   sort(header: TableHeader<Post>): void {
@@ -85,35 +136,9 @@ export class TableComponent implements OnInit, OnDestroy {
       return {...val, sortedState: header.sortedState};
     })
 
+    this.sortState = header;
+
     this.sortService.sortTable(header, this.posts);
-  }
-
-  changeItemsCount(index: number): void {
-    this.itemIndex = index;
-
-    this.itemsControl.setValue(this.dropDownList[this.itemIndex]);
-
-    this.isShowDropDown = false;
-
-    this.postsService.getList$().pipe(
-      tap(post => {
-        this.posts = post;
-        this.allPages = post.length / this.dropDownList[this.itemIndex];
-        post.length = this.dropDownList[this.itemIndex];
-        this.changeDetectorRef.markForCheck();
-      }),
-      takeUntil(this.unsubscribe$),
-    ).subscribe()
-  }
-
-  nextPage(): void {
-    console.log(this.posts);
-    this.currentPage++;
-
-  }
-
-  showDropDown(): void {
-    this.isShowDropDown = !this.isShowDropDown;
   }
 
   ngOnDestroy(): void {
