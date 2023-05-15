@@ -5,8 +5,6 @@ import {TableHeader} from "../../interface/table-header";
 import {SortState} from "../../enum/sort-state";
 import {PostsService} from "../../service/posts.service";
 import {SortService} from "../../service/sort.service";
-import {TableLength} from "../../enum/table-length";
-import {FormControl} from "@angular/forms";
 import {SliceListService} from "../../service/slice-list.service";
 
 @Component({
@@ -17,9 +15,7 @@ import {SliceListService} from "../../service/slice-list.service";
 })
 export class TableComponent implements OnInit, OnDestroy {
 
-  dropDownList = [TableLength.default, TableLength.middle, TableLength.large]
 
-  itemsControl = new FormControl(this.dropDownList[0], {nonNullable: true});
 
   headerList: TableHeader<Post>[] = [
     { head: 'id', sortedState: SortState.default },
@@ -31,9 +27,6 @@ export class TableComponent implements OnInit, OnDestroy {
 
   posts: Post[] = [];
 
-  allPages = 0;
-  currentPage = 1;
-
   private unsubscribe$ = new Subject<void>();
   constructor(
     private readonly postsService: PostsService,
@@ -42,38 +35,6 @@ export class TableComponent implements OnInit, OnDestroy {
     private readonly sliceListService: SliceListService) { }
 
   ngOnInit(): void {
-    this.itemsControl.valueChanges
-      .pipe(
-        tap(value => {
-          this.allPages = this.sliceListService.posts.length / Number(value);
-
-          if(this.currentPage > this.allPages) {
-            this.currentPage = this.allPages;
-          }
-
-          const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(value));
-
-          this.sliceListService.getPostList(slice);
-
-          this.changeDetectorRef.markForCheck();
-        }),
-        takeUntil(this.unsubscribe$),
-      ).subscribe()
-
-    this.postsService.getList$().pipe(
-      tap(posts => {
-        this.allPages = posts.length / this.itemsControl.value;
-
-        this.sliceListService.setPostList(posts);
-        const slice = this.sliceListService.getSliceList(this.currentPage - 1, this.itemsControl.value);
-
-        this.sliceListService.getPostList(slice);
-
-        this.changeDetectorRef.markForCheck();
-      }),
-      takeUntil(this.unsubscribe$),
-    ).subscribe()
-
     this.sliceListService.postList$
       .pipe(
         tap(value => {
@@ -85,46 +46,6 @@ export class TableComponent implements OnInit, OnDestroy {
         }),
         takeUntil(this.unsubscribe$),
       ).subscribe()
-  }
-
-  nextPage(): void {
-    if(this.currentPage === this.allPages) {
-      return;
-    }
-
-    this.currentPage++;
-
-    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
-
-    this.sliceListService.getPostList(slice);
-  }
-
-  previousPage(): void {
-    if (this.currentPage === 1) {
-      return;
-    }
-
-    this.currentPage--;
-
-    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
-
-    this.sliceListService.getPostList(slice);
-  }
-
-  firstPage(): void {
-    this.currentPage = 1;
-
-    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
-
-    this.sliceListService.getPostList(slice);
-  }
-
-  lastPage(): void {
-    this.currentPage = this.allPages;
-
-    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
-
-    this.sliceListService.getPostList(slice);
   }
 
   sort(header: TableHeader<Post>): void {

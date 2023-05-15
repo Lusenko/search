@@ -1,0 +1,27 @@
+<div class="table-options">
+  <div class="item-counter">
+    <p class="text">items per page:</p>
+    <select class="dropdown" [formControl]="itemsControl">
+      <option class="dropdown-counter" *ngFor="let dropDown of dropDownList">{{dropDown}}</option>
+    </select>
+  </div>
+  <div class="pagination">
+    <p class="text">Page {{currentPage}} of {{allPages}}</p>
+    <div class="arrows">
+      <div class="start" (click)="firstPage()">
+        <div class="stick"></div>
+        <div class="arrow"></div>
+      </div>
+      <div class="left" (click)="previousPage()">
+        <div class="arrow"></div>
+      </div>
+      <div class="right" (click)="nextPage()">
+        <div class="arrow"></div>
+      </div>
+      <div class="end" (click)="lastPage()">
+        <div class="arrow"></div>
+        <div class="stick"></div>
+      </div>
+    </div>
+  </div>
+</div>
