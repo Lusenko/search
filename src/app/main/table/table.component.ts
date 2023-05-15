@@ -3,7 +3,6 @@ import {Subject, takeUntil, tap} from "rxjs";
 import {Post} from "../../interface/post";
 import {TableHeader} from "../../interface/table-header";
 import {SortState} from "../../enum/sort-state";
-import {PostsService} from "../../service/posts.service";
 import {SortService} from "../../service/sort.service";
 import {SliceListService} from "../../service/slice-list.service";
 
@@ -29,10 +28,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject<void>();
   constructor(
-    private readonly postsService: PostsService,
     private readonly sortService: SortService,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly sliceListService: SliceListService) { }
+    private readonly sliceListService: SliceListService<Post>) { }
 
   ngOnInit(): void {
     this.sliceListService.postList$

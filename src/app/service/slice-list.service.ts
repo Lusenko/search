@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from "rxjs";
-import {Post} from "../interface/post";
 import {Slice} from "../interface/slice";
 
 @Injectable({
   providedIn: 'root'
 })
-export class SliceListService {
-  private localPostList$ = new BehaviorSubject<Post[]>([]);
+export class SliceListService<T> {
+  private localPostList$ = new BehaviorSubject<T[]>([]);
   postList$ = this.localPostList$.asObservable();
 
-  posts: Post[] = [];
+  posts: T[] = [];
 
-  setPostList(posts: Post[]): void {
+  setPostList(posts: T[]): void {
     this.posts = posts;
   }
 

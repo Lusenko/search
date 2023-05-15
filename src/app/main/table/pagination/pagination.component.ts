@@ -4,6 +4,7 @@ import {FormControl} from "@angular/forms";
 import {Subject, takeUntil, tap} from "rxjs";
 import {SliceListService} from "../../../service/slice-list.service";
 import {PostsService} from "../../../service/posts.service";
+import {Post} from "../../../interface/post";
 
 @Component({
   selector: 'app-pagination',
@@ -23,9 +24,9 @@ export class PaginationComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
 
   constructor(
-    private readonly sliceListService: SliceListService,
+    private readonly sliceListService: SliceListService<Post>,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly postsService: PostsService) { }
+    private readonly postsService: PostsService<Post>) { }
 
   ngOnInit(): void {
     this.itemsControl.valueChanges
