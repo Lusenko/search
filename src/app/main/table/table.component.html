@@ -1,4 +1,4 @@
-<app-pagination></app-pagination>
+<app-pagination [arrayLength]="posts.length" (sliceOperators)="sliceList($event)"></app-pagination>
 <div class="table">
   <table>
     <thead>
@@ -9,7 +9,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let post of posts">
+    <tr *ngFor="let post of displayedPosts">
       <th>{{post.id}}</th>
       <th>{{post.title}}</th>
       <th>{{post.body}}</th>

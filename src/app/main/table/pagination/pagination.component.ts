@@ -1,10 +1,20 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component, EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output, SimpleChanges
+} from '@angular/core';
 import {TableLength} from "../../../enum/table-length";
 import {FormControl} from "@angular/forms";
 import {Subject, takeUntil, tap} from "rxjs";
 import {SliceListService} from "../../../service/slice-list.service";
 import {PostsService} from "../../../service/posts.service";
 import {Post} from "../../../interface/post";
+import {Slice} from "../../../interface/slice";
 
 @Component({
   selector: 'app-pagination',
@@ -12,9 +22,12 @@ import {Post} from "../../../interface/post";
   styleUrls: ['./pagination.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaginationComponent implements OnInit, OnDestroy {
+export class PaginationComponent implements OnInit, OnChanges, OnDestroy {
 
-  dropDownList = [TableLength.default, TableLength.middle, TableLength.large]
+  dropDownList = [TableLength.default, TableLength.middle, TableLength.large];
+
+  @Input() arrayLength = 0;
+  @Output() sliceOperators = new EventEmitter<Slice>();
 
   itemsControl = new FormControl(this.dropDownList[0], {nonNullable: true});
 
@@ -24,15 +37,15 @@ export class PaginationComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
 
   constructor(
-    private readonly sliceListService: SliceListService<Post>,
+    private readonly sliceListService: SliceListService,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly postsService: PostsService<Post>) { }
+    private readonly postsService: PostsService) { }
 
   ngOnInit(): void {
     this.itemsControl.valueChanges
       .pipe(
         tap(value => {
-          this.allPages = this.sliceListService.posts.length / Number(value);
+          this.allPages = this.arrayLength / Number(value);
 
           if(this.currentPage > this.allPages) {
             this.currentPage = this.allPages;
@@ -40,26 +53,24 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
           const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(value));
 
-          this.sliceListService.getPostList(slice);
+          this.sliceOperators.emit(slice);
 
           this.changeDetectorRef.markForCheck();
         }),
         takeUntil(this.unsubscribe$),
       ).subscribe()
+  }
 
-    this.postsService.getList$().pipe(
-      tap(posts => {
-        this.allPages = posts.length / this.itemsControl.value;
+  ngOnChanges(changes: SimpleChanges) {
+    this.getList();
+  }
 
-        this.sliceListService.setPostList(posts);
-        const slice = this.sliceListService.getSliceList(this.currentPage - 1, this.itemsControl.value);
+  getList(): void {
+    this.allPages = this.arrayLength / this.itemsControl.value;
 
-        this.sliceListService.getPostList(slice);
+    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
 
-        this.changeDetectorRef.markForCheck();
-      }),
-      takeUntil(this.unsubscribe$),
-    ).subscribe()
+    this.sliceOperators.emit(slice);
   }
 
   nextPage(): void {
@@ -71,7 +82,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
     const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
 
-    this.sliceListService.getPostList(slice);
+    this.sliceOperators.emit(slice);
   }
 
   previousPage(): void {
@@ -83,7 +94,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
     const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
 
-    this.sliceListService.getPostList(slice);
+    this.sliceOperators.emit(slice);
   }
 
   firstPage(): void {
@@ -91,7 +102,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
     const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
 
-    this.sliceListService.getPostList(slice);
+    this.sliceOperators.emit(slice);
   }
 
   lastPage(): void {
@@ -99,7 +110,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
     const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
 
-    this.sliceListService.getPostList(slice);
+    this.sliceOperators.emit(slice);
   }
 
   ngOnDestroy(): void {

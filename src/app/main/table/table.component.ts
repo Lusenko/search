@@ -1,10 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Subject, takeUntil, tap} from "rxjs";
 import {Post} from "../../interface/post";
 import {TableHeader} from "../../interface/table-header";
 import {SortState} from "../../enum/sort-state";
 import {SortService} from "../../service/sort.service";
 import {SliceListService} from "../../service/slice-list.service";
+import {PostsService} from "../../service/posts.service";
+import {Slice} from "../../interface/slice";
 
 @Component({
   selector: 'app-table',
@@ -13,9 +15,6 @@ import {SliceListService} from "../../service/slice-list.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableComponent implements OnInit, OnDestroy {
-
-
-
   headerList: TableHeader<Post>[] = [
     { head: 'id', sortedState: SortState.default },
     { head: 'title', sortedState: SortState.default },
@@ -25,25 +24,37 @@ export class TableComponent implements OnInit, OnDestroy {
   sortState: TableHeader<Post>;
 
   posts: Post[] = [];
+  displayedPosts: Post[] = [];
 
   private unsubscribe$ = new Subject<void>();
   constructor(
     private readonly sortService: SortService,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly sliceListService: SliceListService<Post>) { }
+    private readonly postsService: PostsService) { }
 
   ngOnInit(): void {
-    this.sliceListService.postList$
-      .pipe(
-        tap(value => {
-          const header = this.sortState ?? SortState.default;
+    this.postsService.getList$().pipe(
+      tap(value => {
+        const header = this.sortState ?? SortState.default;
 
-          this.posts = this.sortService.sortTable(header ,value);
+        this.posts = value;
 
-          this.changeDetectorRef.markForCheck();
-        }),
-        takeUntil(this.unsubscribe$),
-      ).subscribe()
+        this.displayedPosts = this.sortService.sortTable(header, value);
+
+        this.changeDetectorRef.markForCheck();
+      }),
+      takeUntil(this.unsubscribe$),
+    ).subscribe()
+  }
+
+  sliceList(slice: Slice): void {
+    this.displayedPosts = this.posts.slice(slice.begin, slice.end);
+
+    const header = this.sortState ?? SortState.default;
+
+    this.displayedPosts = this.sortService.sortTable(header, this.displayedPosts);
+
+    this.changeDetectorRef.markForCheck();
   }
 
   sort(header: TableHeader<Post>): void {
@@ -57,7 +68,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     this.sortState = header;
 
-    this.sortService.sortTable(header, this.posts);
+    this.sortService.sortTable(header, this.displayedPosts);
   }
 
   ngOnDestroy(): void {
