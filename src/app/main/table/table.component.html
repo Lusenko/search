@@ -1,4 +1,4 @@
-<app-pagination [arrayLength]="posts.length" (sliceOperators)="sliceList($event)"></app-pagination>
+<app-pagination [arrayLength]="posts.length" (paginationChange)="sliceList($event)"></app-pagination>
 <div class="table">
   <table>
     <thead>

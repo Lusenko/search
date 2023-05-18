@@ -28,10 +28,10 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
     const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
 
-    this.sliceOperators.emit(slice);
+    this.paginationChange.emit(slice);
   };
 
-  @Output() sliceOperators = new EventEmitter<Slice>();
+  @Output() paginationChange = new EventEmitter<Slice>();
 
   itemsControl = new FormControl(this.dropDownList[0], {nonNullable: true});
 
@@ -56,7 +56,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
           const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(value));
 
-          this.sliceOperators.emit(slice);
+          this.paginationChange.emit(slice);
 
           this.changeDetectorRef.markForCheck();
         }),
@@ -73,7 +73,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
     const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
 
-    this.sliceOperators.emit(slice);
+    this.paginationChange.emit(slice);
   }
 
   previousPage(): void {
@@ -85,7 +85,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
     const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
 
-    this.sliceOperators.emit(slice);
+    this.paginationChange.emit(slice);
   }
 
   firstPage(): void {
@@ -93,7 +93,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
     const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
 
-    this.sliceOperators.emit(slice);
+    this.paginationChange.emit(slice);
   }
 
   lastPage(): void {
@@ -101,7 +101,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
     const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
 
-    this.sliceOperators.emit(slice);
+    this.paginationChange.emit(slice);
   }
 
   ngOnDestroy(): void {
