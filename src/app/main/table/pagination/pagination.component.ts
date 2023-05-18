@@ -12,8 +12,6 @@ import {TableLength} from "../../../enum/table-length";
 import {FormControl} from "@angular/forms";
 import {Subject, takeUntil, tap} from "rxjs";
 import {SliceListService} from "../../../service/slice-list.service";
-import {PostsService} from "../../../service/posts.service";
-import {Post} from "../../../interface/post";
 import {Slice} from "../../../interface/slice";
 
 @Component({
@@ -38,8 +36,7 @@ export class PaginationComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private readonly sliceListService: SliceListService,
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly postsService: PostsService) { }
+    private readonly changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.itemsControl.valueChanges
@@ -62,10 +59,10 @@ export class PaginationComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.getList();
+    this.sliceList();
   }
 
-  getList(): void {
+  sliceList(): void {
     this.allPages = this.arrayLength / this.itemsControl.value;
 
     const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
