@@ -3,10 +3,9 @@ import {
   ChangeDetectorRef,
   Component, EventEmitter,
   Input,
-  OnChanges,
   OnDestroy,
   OnInit,
-  Output, SimpleChanges
+  Output
 } from '@angular/core';
 import {TableLength} from "../../../enum/table-length";
 import {FormControl} from "@angular/forms";
@@ -20,11 +19,18 @@ import {Slice} from "../../../interface/slice";
   styleUrls: ['./pagination.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaginationComponent implements OnInit, OnChanges, OnDestroy {
+export class PaginationComponent implements OnInit, OnDestroy {
 
   dropDownList = [TableLength.default, TableLength.middle, TableLength.large];
 
-  @Input() arrayLength = 0;
+  @Input() set arrayLength(value: number) {
+    this.allPages = value / this.itemsControl.value;
+
+    const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
+
+    this.sliceOperators.emit(slice);
+  };
+
   @Output() sliceOperators = new EventEmitter<Slice>();
 
   itemsControl = new FormControl(this.dropDownList[0], {nonNullable: true});
@@ -48,7 +54,7 @@ export class PaginationComponent implements OnInit, OnChanges, OnDestroy {
             this.currentPage = this.allPages;
           }
 
-          const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(value));
+          const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(value));
 
           this.sliceOperators.emit(slice);
 
@@ -58,18 +64,6 @@ export class PaginationComponent implements OnInit, OnChanges, OnDestroy {
       ).subscribe()
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    this.sliceList();
-  }
-
-  sliceList(): void {
-    this.allPages = this.arrayLength / this.itemsControl.value;
-
-    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
-
-    this.sliceOperators.emit(slice);
-  }
-
   nextPage(): void {
     if(this.currentPage === this.allPages) {
       return;
@@ -77,7 +71,7 @@ export class PaginationComponent implements OnInit, OnChanges, OnDestroy {
 
     this.currentPage++;
 
-    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
+    const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
 
     this.sliceOperators.emit(slice);
   }
@@ -89,7 +83,7 @@ export class PaginationComponent implements OnInit, OnChanges, OnDestroy {
 
     this.currentPage--;
 
-    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
+    const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
 
     this.sliceOperators.emit(slice);
   }
@@ -97,7 +91,7 @@ export class PaginationComponent implements OnInit, OnChanges, OnDestroy {
   firstPage(): void {
     this.currentPage = 1;
 
-    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
+    const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
 
     this.sliceOperators.emit(slice);
   }
@@ -105,7 +99,7 @@ export class PaginationComponent implements OnInit, OnChanges, OnDestroy {
   lastPage(): void {
     this.currentPage = this.allPages;
 
-    const slice = this.sliceListService.getSliceList(this.currentPage - 1, Number(this.itemsControl.value));
+    const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
 
     this.sliceOperators.emit(slice);
   }
