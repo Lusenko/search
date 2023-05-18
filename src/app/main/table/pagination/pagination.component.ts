@@ -24,7 +24,9 @@ export class PaginationComponent implements OnInit, OnDestroy {
   dropDownList = [TableLength.default, TableLength.middle, TableLength.large];
 
   @Input() set arrayLength(value: number) {
-    this.allPages = value / this.itemsControl.value;
+    this.tableLength = value;
+
+    this.allPages = this.tableLength / this.itemsControl.value;
 
     const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
 
@@ -37,8 +39,19 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
   allPages = 0;
   currentPage = 1;
+  tableLength = 1;
+
+  isDisableButton = false;
 
   private unsubscribe$ = new Subject<void>();
+
+  get isDisabledLastPage(): boolean {
+    return this.currentPage === this.allPages;
+  }
+
+  get isDisabledFirstPage(): boolean {
+    return this.currentPage === 1;
+  }
 
   constructor(
     private readonly sliceListService: SliceListService,
@@ -48,7 +61,7 @@ export class PaginationComponent implements OnInit, OnDestroy {
     this.itemsControl.valueChanges
       .pipe(
         tap(value => {
-          this.allPages = this.arrayLength / Number(value);
+          this.allPages = this.tableLength / Number(value);
 
           if(this.currentPage > this.allPages) {
             this.currentPage = this.allPages;
@@ -66,6 +79,8 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
   nextPage(): void {
     if(this.currentPage === this.allPages) {
+      this.isDisableButton = true;
+
       return;
     }
 
@@ -98,6 +113,8 @@ export class PaginationComponent implements OnInit, OnDestroy {
 
   lastPage(): void {
     this.currentPage = this.allPages;
+
+    this.isDisableButton = true;
 
     const slice = this.sliceListService.getSlice(this.currentPage - 1, Number(this.itemsControl.value));
 

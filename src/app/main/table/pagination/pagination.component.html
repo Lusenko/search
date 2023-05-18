@@ -8,20 +8,20 @@
   <div class="pagination">
     <p class="text">Page {{currentPage}} of {{allPages}}</p>
     <div class="arrows">
-      <div class="start" (click)="firstPage()">
+      <button class="start" [disabled]="isDisabledFirstPage" (click)="firstPage()">
+        <div class="stick first-stick"></div>
+        <div class="arrow"></div>
+      </button>
+      <button class="left" [disabled]="isDisabledFirstPage" (click)="previousPage()">
+        <div class="arrow"></div>
+      </button>
+      <button class="right" [disabled]="isDisabledLastPage" (click)="nextPage()">
+        <div class="arrow"></div>
+      </button>
+      <button class="end" [disabled]="isDisabledLastPage" (click)="lastPage()">
+        <div class="arrow"></div>
         <div class="stick"></div>
-        <div class="arrow"></div>
-      </div>
-      <div class="left" (click)="previousPage()">
-        <div class="arrow"></div>
-      </div>
-      <div class="right" (click)="nextPage()">
-        <div class="arrow"></div>
-      </div>
-      <div class="end" (click)="lastPage()">
-        <div class="arrow"></div>
-        <div class="stick"></div>
-      </div>
+      </button>
     </div>
   </div>
 </div>
