@@ -23,6 +23,10 @@ const routes: Routes = [
   {
     path: 'table',
     loadChildren: () => import('./table/table.module').then(m => m.TableModule)
+  },
+  {
+    path: 'map',
+    loadChildren: () => import('./map/map.module').then(m => m.MapModule)
   }
 
 ];
