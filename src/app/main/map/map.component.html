@@ -1,13 +1,18 @@
 <div class="inputs" [formGroup]="coordinateForm">
-  <div class="lat-input">
-    <p class="text">Latitude:</p>
-    <input type="text" formControlName="latitude">
+
+  <div class="fields">
+    <div class="lat-input">
+      <p class="text">Latitude:</p>
+      <input type="text" formControlName="latitude">
+    </div>
+
+    <div class="lon-input">
+      <p class="text">Longitude:</p>
+      <input type="text" formControlName="longitude">
+    </div>
   </div>
 
-  <div class="lon-input">
-    <p class="text">Longitude:</p>
-    <input type="text" formControlName="longitude">
-  </div>
+  <button class="submit" (click)="addMarker()">Add Marker</button>
 </div>
 
 <div class="map-wrapper">

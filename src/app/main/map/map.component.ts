@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/co
 import * as L from 'leaflet';
 import {FormBuilder} from "@angular/forms";
 import {Subject} from "rxjs";
+import {Coordinates} from "../../interface/coordinates";
 
 @Component({
   selector: 'app-map',
@@ -17,6 +18,16 @@ export class MapComponent implements OnInit, OnDestroy {
   })
 
   private map: L.Map;
+  private defaultIcon = L.icon({
+    iconUrl: 'assets/marker/icon.png',
+    iconSize: [25,25],
+
+  })
+  private customIcon = L.icon({
+    iconUrl: 'assets/marker/pin.png',
+    iconSize: [25,25],
+  })
+
   private unsubscribe$ = new Subject<void>();
   constructor(private readonly formBuilder: FormBuilder) {}
 
@@ -25,7 +36,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   createMap(): void {
-    const coordinates = {
+    const coordinates: Coordinates = {
       lat: 48.539927079257815,
       lng: 32.53492066116194,
     };
@@ -38,6 +49,34 @@ export class MapComponent implements OnInit, OnDestroy {
       minZoom: 12,
       maxZoom: 17,
     }).addTo(this.map);
+
+    const defaultMarker = L.marker([coordinates.lat, coordinates.lng], {icon: this.defaultIcon, draggable: true})
+      .addTo(this.map)
+      .on('click', () => {
+        const coord = String(defaultMarker.getLatLng()).split(',');
+        const lat = coord[0].split('(');
+        const lng = coord[1].split(')');
+
+        this.coordinateForm.setValue({latitude: lat[1].trim(), longitude: lng[0].trim()})
+      });
+  }
+
+  addMarker(): void {
+    const coordinates: Coordinates = {
+      lat: Number(this.coordinateForm.get('latitude')?.value) ?? '',
+      lng: Number(this.coordinateForm.get('longitude')?.value) ?? ''
+    }
+
+    const marker = L.marker([coordinates.lat, coordinates.lng], {icon: this.customIcon, draggable: true})
+      .addTo(this.map).on('click', () => {
+      const coord = String(marker.getLatLng()).split(',');
+      const lat = coord[0].split('(');
+      const lng = coord[1].split(')');
+
+      this.coordinateForm.setValue({latitude: lat[1].trim(), longitude: lng[0].trim()})
+    });
+
+    this.coordinateForm.reset();
   }
 
   ngOnDestroy(): void {
