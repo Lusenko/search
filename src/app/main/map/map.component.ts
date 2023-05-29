@@ -19,7 +19,7 @@ export class MapComponent implements OnInit, OnDestroy {
   })
 
   private map: L.Map;
-  //private drawItems = new L.FeatureGroup();
+  private drawItems = new L.FeatureGroup();
 
   private defaultIcon = L.icon({
     iconUrl: 'assets/marker/icon.png',
@@ -36,7 +36,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.createMap();
-    //this.drawOnMap();
+    this.drawOnMap();
   }
 
   createMap(): void {
@@ -63,8 +63,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
         this.coordinateForm.setValue({latitude: lat[1].trim(), longitude: lng[0].trim()})
       });
-
-    //this.drawItems.addTo(this.map);
   }
 
   addMarker(): void {
@@ -85,26 +83,11 @@ export class MapComponent implements OnInit, OnDestroy {
     this.coordinateForm.reset();
   }
 
-  /*drawOnMap(): void {
-    const drawControl = new L.Control.Draw ({
-      edit: {
-        featureGroup: this.drawItems,
-      },
-      draw: {
-        marker: {
-          icon: this.customIcon
-        },
-        polygon: {
-          shapeOptions: {
-            color: '#00000',
-            fillColor: '$00000'
-          }
-        }
-      }
-    });
-
-    this.map.addControl(drawControl);
-  }*/
+  drawOnMap(): void {
+    this.map.on(L.Draw.Event.CREATED, event => {
+      this.drawItems.addLayer(event.layer).addTo(this.map);
+    })
+  }
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();
