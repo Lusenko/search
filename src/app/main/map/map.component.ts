@@ -47,7 +47,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     const zoomLevel = 12;
 
-    this.map = L.map('map', {drawControl: true}).setView([coordinates.lat, coordinates.lng], zoomLevel);
+    this.map = L.map('map').setView([coordinates.lat, coordinates.lng], zoomLevel);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       minZoom: 12,
@@ -84,6 +84,22 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   drawOnMap(): void {
+    const drawControl = new L.Control.Draw ({
+      edit: {
+        featureGroup: this.drawItems,
+      },
+      draw: {
+        polygon: {
+          shapeOptions: {
+            color: '#000000',
+            fillColor: '#262626'
+          }
+        }
+      }
+    });
+
+    this.map.addControl(drawControl);
+
     this.map.on(L.Draw.Event.CREATED, event => {
       this.drawItems.addLayer(event.layer).addTo(this.map);
     })
