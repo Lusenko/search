@@ -3,6 +3,7 @@ import * as L from 'leaflet';
 import {FormBuilder} from "@angular/forms";
 import {Subject} from "rxjs";
 import {Coordinates} from "../../interface/coordinates";
+import 'leaflet-draw'
 
 @Component({
   selector: 'app-map',
@@ -18,6 +19,8 @@ export class MapComponent implements OnInit, OnDestroy {
   })
 
   private map: L.Map;
+  //private drawItems = new L.FeatureGroup();
+
   private defaultIcon = L.icon({
     iconUrl: 'assets/marker/icon.png',
     iconSize: [25,25],
@@ -33,6 +36,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.createMap();
+    //this.drawOnMap();
   }
 
   createMap(): void {
@@ -43,7 +47,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     const zoomLevel = 12;
 
-    this.map = L.map('map').setView([coordinates.lat, coordinates.lng], zoomLevel);
+    this.map = L.map('map', {drawControl: true}).setView([coordinates.lat, coordinates.lng], zoomLevel);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       minZoom: 12,
@@ -59,6 +63,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
         this.coordinateForm.setValue({latitude: lat[1].trim(), longitude: lng[0].trim()})
       });
+
+    //this.drawItems.addTo(this.map);
   }
 
   addMarker(): void {
@@ -78,6 +84,27 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.coordinateForm.reset();
   }
+
+  /*drawOnMap(): void {
+    const drawControl = new L.Control.Draw ({
+      edit: {
+        featureGroup: this.drawItems,
+      },
+      draw: {
+        marker: {
+          icon: this.customIcon
+        },
+        polygon: {
+          shapeOptions: {
+            color: '#00000',
+            fillColor: '$00000'
+          }
+        }
+      }
+    });
+
+    this.map.addControl(drawControl);
+  }*/
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();
