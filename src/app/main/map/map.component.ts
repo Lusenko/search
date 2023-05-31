@@ -1,7 +1,15 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component, ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import * as L from 'leaflet';
 import {FormBuilder} from "@angular/forms";
-import {Subject} from "rxjs";
+import {filter, fromEvent, Subject, takeUntil, tap} from "rxjs";
 import {Coordinates} from "../../interface/coordinates";
 import 'leaflet-draw'
 
@@ -11,12 +19,15 @@ import 'leaflet-draw'
   styleUrls: ['./map.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MapComponent implements OnInit, OnDestroy {
+export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('latInput') inputLatitude: ElementRef;
 
   coordinateForm = this.formBuilder.group({
     latitude: '',
     longitude: ''
   })
+
+  obj: any = {};
 
   private map: L.Map;
   private drawItems = new L.FeatureGroup();
@@ -32,7 +43,8 @@ export class MapComponent implements OnInit, OnDestroy {
   })
 
   private unsubscribe$ = new Subject<void>();
-  constructor(private readonly formBuilder: FormBuilder) {}
+
+  constructor(private readonly formBuilder: FormBuilder, private readonly changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.createMap();
@@ -100,9 +112,41 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.map.addControl(drawControl);
 
+    const getFigureData = JSON.parse(localStorage.getItem('polygon') ?? '');
+
+    L.geoJSON(getFigureData, {
+      style: { color: '#000000', fillColor: '#262626'}
+    }).addTo(this.map);
+
     this.map.on(L.Draw.Event.CREATED, event => {
       this.drawItems.addLayer(event.layer).addTo(this.map);
+
+      localStorage.setItem('polygon', JSON.stringify(this.drawItems.toGeoJSON()));
     })
+  }
+
+  slice(value: string): void {
+    const coord = value?.split(',') ?? '';
+
+    this.coordinateForm.setValue({latitude: coord[0], longitude: coord[1]?.trim()}, {emitEvent: false});
+  }
+
+  getElementWithClipBord(): void {
+    navigator["clipboard"].readText().then(data => {
+      this.slice(data);
+    })
+  }
+
+  ngAfterViewInit(): void {
+    fromEvent<KeyboardEvent>(this.inputLatitude.nativeElement, 'keydown').pipe(
+      filter(event => event.ctrlKey && event.keyCode === 86),
+      tap(() => {
+        this.getElementWithClipBord();
+
+        this.changeDetectorRef.markForCheck();
+      }),
+      takeUntil(this.unsubscribe$),
+    ).subscribe()
   }
 
   ngOnDestroy(): void {
