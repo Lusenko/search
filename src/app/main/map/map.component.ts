@@ -12,6 +12,7 @@ import {FormBuilder} from "@angular/forms";
 import {filter, fromEvent, Subject, takeUntil, tap} from "rxjs";
 import {Coordinates} from "../../interface/coordinates";
 import 'leaflet-draw'
+import {getMarkerCoord} from "../../shared/getMarkerCoord";
 
 @Component({
   selector: 'app-map',
@@ -27,16 +28,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
     longitude: ''
   })
 
-  obj: any = {};
-
   private map: L.Map;
   private drawItems = new L.FeatureGroup();
 
-  private defaultIcon = L.icon({
-    iconUrl: 'assets/marker/icon.png',
-    iconSize: [25,25],
-
-  })
   private customIcon = L.icon({
     iconUrl: 'assets/marker/pin.png',
     iconSize: [25,25],
@@ -49,9 +43,33 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.createMap();
     this.drawOnMap();
+    this.getGeoCoordinate();
   }
 
-  createMap(): void {
+  addMarker(): void {
+    const coordinates: Coordinates = {
+      lat: Number(this.coordinateForm.get('latitude')?.value) ?? '',
+      lng: Number(this.coordinateForm.get('longitude')?.value) ?? ''
+    }
+
+    const marker = L.marker([coordinates.lat, coordinates.lng], {icon: this.customIcon, draggable: true})
+      .addTo(this.map).on('click', () => {
+        const coord = getMarkerCoord(marker);
+        this.coordinateForm.setValue({latitude: coord[0].trim(), longitude: coord[1].trim()})
+      });
+
+    const geoCoordinates = localStorage.getItem('geoCoord');
+
+    L.geoJSON().addData(JSON.parse(geoCoordinates ?? '')).eachLayer(() => {
+      this.drawItems.addLayer(marker);
+
+      localStorage.setItem('geoCoord', JSON.stringify(this.drawItems.toGeoJSON()));
+    });
+
+    this.coordinateForm.reset();
+  }
+
+  private createMap(): void {
     const coordinates: Coordinates = {
       lat: 48.539927079257815,
       lng: 32.53492066116194,
@@ -66,41 +84,59 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
       maxZoom: 17,
     }).addTo(this.map);
 
-    const defaultMarker = L.marker([coordinates.lat, coordinates.lng], {icon: this.defaultIcon, draggable: true})
-      .addTo(this.map)
+    const defaultMarker = L.marker([coordinates.lat, coordinates.lng], {icon: this.customIcon, draggable: true})
+      .addTo(this.drawItems)
       .on('click', () => {
-        const coord = String(defaultMarker.getLatLng()).split(',');
-        const lat = coord[0].split('(');
-        const lng = coord[1].split(')');
+        const coord = getMarkerCoord(defaultMarker);
 
-        this.coordinateForm.setValue({latitude: lat[1].trim(), longitude: lng[0].trim()})
+        this.coordinateForm.setValue({latitude: coord[0].trim(), longitude: coord[1].trim()})
       });
+
+    this.drawItems.addTo(this.map);
   }
 
-  addMarker(): void {
-    const coordinates: Coordinates = {
-      lat: Number(this.coordinateForm.get('latitude')?.value) ?? '',
-      lng: Number(this.coordinateForm.get('longitude')?.value) ?? ''
+  private getGeoCoordinate(): void {
+    const geoCoordinates = localStorage.getItem('geoCoord');
+
+    if (geoCoordinates !== null) {
+      L.geoJSON().addData(JSON.parse(geoCoordinates)).eachLayer(layer => {
+
+        layer.addTo(this.drawItems);
+
+        if (layer instanceof L.Marker) {
+          layer.setIcon(this.customIcon);
+        }
+
+
+        /*if (layer instanceof L.Marker) {
+          layer.setIcon(this.customIcon).on("move", () => {
+            this.drawItems.addLayer(layer);
+
+            const coord = getMarkerCoord(layer);
+
+            localStorage.setItem('geoCoord', JSON.stringify(layer.toGeoJSON()));
+
+            this.coordinateForm.setValue({latitude: coord[0].trim(), longitude: coord[1].trim()})
+          });
+
+          layer.options.draggable = true;
+        }*/
+      }).setStyle({
+        color: '#000000',
+        fillColor: '#262626'
+      });
     }
-
-    const marker = L.marker([coordinates.lat, coordinates.lng], {icon: this.customIcon, draggable: true})
-      .addTo(this.map).on('click', () => {
-      const coord = String(marker.getLatLng()).split(',');
-      const lat = coord[0].split('(');
-      const lng = coord[1].split(')');
-
-      this.coordinateForm.setValue({latitude: lat[1].trim(), longitude: lng[0].trim()})
-    });
-
-    this.coordinateForm.reset();
   }
 
-  drawOnMap(): void {
-    const drawControl = new L.Control.Draw ({
+  private drawOnMap(): void {
+    const drawControl = new L.Control.Draw({
       edit: {
         featureGroup: this.drawItems,
       },
       draw: {
+        marker: {
+          icon: this.customIcon
+        },
         polygon: {
           shapeOptions: {
             color: '#000000',
@@ -112,28 +148,18 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.map.addControl(drawControl);
 
-    const getFigureData = JSON.parse(localStorage.getItem('polygon') ?? '');
-
-    L.geoJSON(getFigureData, {
-      style: { color: '#000000', fillColor: '#262626'}
-    }).addTo(this.map);
-
     this.map.on(L.Draw.Event.CREATED, event => {
       this.drawItems.addLayer(event.layer).addTo(this.map);
 
-      localStorage.setItem('polygon', JSON.stringify(this.drawItems.toGeoJSON()));
+      localStorage.setItem('geoCoord', JSON.stringify(this.drawItems.toGeoJSON()));
     })
   }
 
-  slice(value: string): void {
-    const coord = value?.split(',') ?? '';
-
-    this.coordinateForm.setValue({latitude: coord[0], longitude: coord[1]?.trim()}, {emitEvent: false});
-  }
-
-  getElementWithClipBord(): void {
+  private getElementWithClipBord(): void {
     navigator["clipboard"].readText().then(data => {
-      this.slice(data);
+      const coord = data?.split(',') ?? '';
+
+      this.coordinateForm.setValue({latitude: coord[0], longitude: coord[1]?.trim()}, {emitEvent: false});
     })
   }
 
