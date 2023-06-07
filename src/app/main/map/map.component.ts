@@ -107,20 +107,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
           layer.setIcon(this.customIcon);
         }
 
-
-        /*if (layer instanceof L.Marker) {
-          layer.setIcon(this.customIcon).on("move", () => {
-            this.drawItems.addLayer(layer);
-
-            const coord = getMarkerCoord(layer);
-
-            localStorage.setItem('geoCoord', JSON.stringify(layer.toGeoJSON()));
-
-            this.coordinateForm.setValue({latitude: coord[0].trim(), longitude: coord[1].trim()})
-          });
-
-          layer.options.draggable = true;
-        }*/
       }).setStyle({
         color: '#000000',
         fillColor: '#262626'
